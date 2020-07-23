@@ -1,7 +1,7 @@
 const firebase = require("firebase");
-
+ 
 const firebaseConfig = {
-  apiKey: "AIzaSyDzaaWvEJhbJpYICgqn9xPG_N6dglVbkxY",
+  apiKey: process.env.api_key,
   authDomain: "ghazibot-30bf6.firebaseapp.com",
   databaseURL: "https://ghazibot-30bf6.firebaseio.com",
   projectId: "ghazibot-30bf6",

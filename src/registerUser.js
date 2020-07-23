@@ -22,11 +22,11 @@ function registerUser(bot) {
 
   bot.onText(/start/, (msg, match) => {
     const chatId = msg.chat.id;
-    const fullName = msg.chat.first_name + " " + msg.chat.last_name;
+    const firstName = msg.chat.first_name;
 
     // bot.sendMessage(
     //   chatId,
-    //   `Welcome ${fullName}!\nLet's start engaging in next round. If you need any assistance, please use /rules command.`
+    //   `Welcome ${firstName}!\nLet's start engaging in next round. If you need any assistance, please use /rules command.`
     // );
 
     user.id = chatId;
@@ -36,13 +36,13 @@ function registerUser(bot) {
 
     bot.sendMessage(
       chatId,
-      `Hi ${fullName} \nYou have to register yourself in order to engage in rounds. \nPlease write your location in this format below. \ne.g. /location New York, USA`
+      `Hi ${firstName} \nYou have to register yourself in order to engage in rounds. \nPlease write your location in this format below. \ne.g. /location New York, USA`
     );
   });
 
   bot.onText(/register/, (msg, match) => {
     const chatId = msg.chat.id;
-    const fullName = msg.chat.first_name + " " + msg.chat.last_name;
+    const firstName = msg.chat.first_name;
 
     user.id = chatId;
     user.first_name = msg.chat.first_name;
@@ -51,7 +51,7 @@ function registerUser(bot) {
 
     bot.sendMessage(
       chatId,
-      `Hi ${fullName} \nYou have to register yourself in order to engage in rounds. \nPlease write your location in this format below. \ne.g. /location New York, USA`
+      `Hi ${firstName} \nYou have to register yourself in order to engage in rounds. \nPlease write your location in this format below. \ne.g. /location New York, USA`
     );
   });
 
@@ -118,20 +118,21 @@ function registerUser(bot) {
     const chatId = msg.chat.id;
     const userReply = match.input.split(" ");
     const igUserName = userReply.slice(1, userReply.length).join(" ");
+    const firstName = msg.chat.first_name;
 
     if (!igUserName) {
       bot.sendMessage(
         chatId,
         `Please provide your Instagram Username to engage in rounds!`
       );
-    } else if (igUserName) {
+    } else {
       user.ig_username = igUserName;
 
       db.ref("users/" + user.id).set(user);
 
       bot.sendMessage(
         chatId,
-        `Congratulations! You are registered now. 🥳\nPlease use /update_profile to modify your details.\n\nHere are your details:\nName: ${fullName}\nLocation: ${user.location}\nEmail: ${user.email}\nIG Username: ${user.ig_username}\n\nYou can use /rules command to see round rules and you can use /round command to check time left for next round.`
+        `Congratulations! You are registered now. 🥳\nPlease use /update_profile to modify your details.\n\nHere are your details:\nName: ${firstName}\nLocation: ${user.location}\nEmail: ${user.email}\nIG Username: ${user.ig_username}\n\nYou can use /rules command to see round rules and you can use /round command to check time left for next round.`
       );
     }
   });
