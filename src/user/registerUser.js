@@ -31,8 +31,8 @@ function registerUser(bot) {
 
     user.id = chatId;
     user.first_name = msg.chat.first_name;
-    user.last_name = msg.chat.last_name || '';
-    user.telegram_username = msg.chat.username;
+    user.last_name = msg.chat.last_name || "";
+    user.telegram_username = msg.chat.username || '';
 
     bot.sendMessage(
       chatId,
@@ -46,8 +46,8 @@ function registerUser(bot) {
 
     user.id = chatId;
     user.first_name = msg.chat.first_name;
-    user.last_name = msg.chat.last_name || '';
-    user.telegram_username = msg.chat.username;
+    user.last_name = msg.chat.last_name || "";
+    user.telegram_username = msg.chat.username || "";
 
     bot.sendMessage(
       chatId,
@@ -119,7 +119,7 @@ function registerUser(bot) {
     const userReply = match.input.split(" ");
     const igUserName = userReply.slice(1, userReply.length).join(" ");
     const firstName = msg.chat.first_name;
-    const lastName = msg.chat.last_name || '';
+    const lastName = msg.chat.last_name || "";
 
     if (!igUserName) {
       bot.sendMessage(
@@ -133,7 +133,11 @@ function registerUser(bot) {
 
       bot.sendMessage(
         chatId,
-        `Congratulations! You are registered now. 🥳\nPlease use /update_profile to modify your details.\n\nHere are your details:\nName: ${firstName + ' ' + lastName}\nLocation: ${user.location}\nEmail: ${user.email}\nIG Username: ${user.ig_username}\n\nYou can use /rules command to see round rules and you can use /round command to check time left for next round.`
+        `Congratulations! You are registered now. 🥳\nPlease use /update_profile to modify your details.\n\nHere are your details:\nName: ${
+          firstName + " " + lastName
+        }\nLocation: ${user.location}\nEmail: ${user.email}\nIG Username: ${
+          user.ig_username
+        }\n\nYou can use /rules command to see round rules and you can use /round command to check time left for next round.`
       );
     }
   });

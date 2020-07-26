@@ -1,18 +1,7 @@
-const db = require("./firebase");
+const db = require("../firebase");
+const keyboardOpts = require("../utils/keyboardOpts");
 
 //--> Inline - Keyboard
-const opts = {
-  reply_markup: {
-    inline_keyboard: [
-      [{ text: "Email", callback_data: "Email" }],
-      [
-        { text: "IG Username", callback_data: "Ig_username" },
-        { text: "Location", callback_data: "Location" },
-      ],
-    ],
-  },
-};
-
 let user;
 
 function updateProfile(bot) {
@@ -22,7 +11,13 @@ function updateProfile(bot) {
     bot.sendMessage(
       chatId,
       "Which information would you like to update?",
-      opts
+      keyboardOpts([
+        [{ text: "Email", callback_data: "Email" }],
+        [
+          { text: "IG Username", callback_data: "Ig_username" },
+          { text: "Location", callback_data: "Location" },
+        ],
+      ])
     );
   });
 
