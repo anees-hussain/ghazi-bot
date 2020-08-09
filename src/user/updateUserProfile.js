@@ -1,6 +1,14 @@
 const db = require("../firebase");
 const keyboardOpts = require("../utils/keyboardOpts");
 
+const opts = keyboardOpts([
+  [{ text: "Email", callback_data: "Email" }],
+  [
+    { text: "IG Username", callback_data: "Ig_username" },
+    { text: "Location", callback_data: "Location" },
+  ],
+]);
+
 //--> Inline - Keyboard
 let user;
 
@@ -11,13 +19,7 @@ function updateProfile(bot) {
     bot.sendMessage(
       chatId,
       "Which information would you like to update?",
-      keyboardOpts([
-        [{ text: "Email", callback_data: "Email" }],
-        [
-          { text: "IG Username", callback_data: "Ig_username" },
-          { text: "Location", callback_data: "Location" },
-        ],
-      ])
+      opts
     );
   });
 
@@ -26,10 +28,13 @@ function updateProfile(bot) {
     const chatId = callback_query.message.chat.id;
     const data = callback_query.data;
 
-    bot.sendMessage(
-      chatId,
-      `Please provide your ${data} in this format.\n/update${data} Your Info`
-    );
+    // Validation
+    if (data === "Email" || data === "IG Username" || data === "Location") {
+      bot.sendMessage(
+        chatId,
+        `Please provide your ${data} in this format.\n/update${data} Your Info`
+      );
+    }
   });
 
   bot.onText(/updateEmail/, (msg, match) => {

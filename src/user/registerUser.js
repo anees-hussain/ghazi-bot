@@ -1,4 +1,4 @@
-const db = require("./firebase");
+const db = require("../firebase");
 const Joi = require("@hapi/joi");
 
 const schema = Joi.object({
@@ -32,7 +32,7 @@ function registerUser(bot) {
     user.id = chatId;
     user.first_name = msg.chat.first_name;
     user.last_name = msg.chat.last_name || "";
-    user.telegram_username = msg.chat.username || '';
+    user.telegram_username = msg.chat.username || "";
 
     bot.sendMessage(
       chatId,

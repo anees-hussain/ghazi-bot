@@ -3,7 +3,7 @@ const Sentry = require("@sentry/node");
 const TelegramBot = require("node-telegram-bot-api");
 const token = process.env.bot_token;
 const bot = new TelegramBot(token, { polling: true });
-const registerUser = require("./src/registerUser");
+const registerUser = require("./src/user/registerUser");
 const updateProfile = require("./src/user/updateUserProfile");
 const engagementRound = require('./src/engagementRound');
 

@@ -1,14 +1,21 @@
+const db = require("./firebase");
 const keyboardOpts = require("./utils/keyboardOpts");
 
+let user;
+let chatId = "939580232";
+let username;
+
+// Getting Ig_username from DB
+db.ref(`/users/${chatId}`).on("value", (snapshot) => {
+  user = snapshot.val();
+  username = user.ig_username;
+});
+
+// Enagagement Round after n interval
 function engagementRound(bot) {
   setInterval(() => {
-    let date = new Date();
-    let hours = date.getHours();
-    let min = date.getMinutes();
-    let sec = date.getSeconds();
-
     bot.sendMessage(
-      "939580232",
+      chatId,
       `⚫️ DROP YOUR USERNAME TO JOIN ⚫️
 
 How to DROP your username:
@@ -20,9 +27,44 @@ How to DROP your username:
 4. The round will last for 30 Minutes.
 
 You will be notified when the round starts.`,
-      keyboardOpts([[{ text: "Username", callback_data: "username" }]])
+      keyboardOpts([[{ text: username, callback_data: username }]])
     );
-  }, 1.8e6);
+  }, 1.8e6); // 30 Mints
+
+  bot.on("callback_query", (callback_query) => {
+    const chatId = callback_query.message.chat.id;
+    const data = callback_query.data;
+
+    // Adding Participant to round
+
+    db.ref("engagementRound/participants/" + user.id).set(username);
+
+    bot.sendMessage(
+      chatId,
+      "Congratulations 🥳\nYou have dropped your username successfully."
+    );
+  });
+
+  setInterval(() => {
+    bot.sendMessage(
+      chatId,
+      "Round has been started. Please engage with all usernames to avoid any warning."
+    );
+  }, 2.1e6); // 35 Mints
+
+  setInterval(() => {
+    bot.sendMessage(
+      chatId,
+      "Following usernames are remaining. Please engage with these usernames to complete round successfully."
+    );
+  }, 3e6); // 50 Mints
+
+  setInterval(() => {
+    bot.sendMessage(
+      chatId,
+      "Round Ended.\nThank you so much for engaging in round. I would like to see you in next round.\nHappy Enagaging!"
+    );
+  }, 3.6e6); // 60 Mints
 }
 
 module.exports = engagementRound;
