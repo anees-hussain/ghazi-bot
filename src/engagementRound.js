@@ -1,18 +1,37 @@
+// After starting a round:
+  // Bot should get latest posts links of all participants.
+  // Bot should send a list of links to all participants.
+
+// Bot should set a countdown of current round.
+// Bot should send a round end message when countdown ends
+// Bot should warning OR success message to particiants.
+
 const db = require("./firebase");
 const keyboardOpts = require("./utils/keyboardOpts");
 
 let user;
-let chatId = "939580232";
+let chatId;
+let participant;
 let username;
 
 // Getting Ig_username from DB
-db.ref(`/users/${chatId}`).on("value", (snapshot) => {
+
+//--> Here I need to add a loop to get all registered users chatids **IMPORTANT_NOTE**
+db.ref(`/users/939580232`).on("value", (snapshot) => {
   user = snapshot.val();
-  username = user.ig_username;
+  username = user.ig_username || '';
+  chatId = user.id
+});
+
+// Get Participant chatId and send message about round status
+db.ref(`/engagementRound/participants/939580232/`).on("value", (snapshot) => {
+  let user = snapshot.val();
+  participant = user;
 });
 
 // Enagagement Round after n interval
 function engagementRound(bot) {
+
   setInterval(() => {
     bot.sendMessage(
       chatId,
@@ -29,15 +48,15 @@ How to DROP your username:
 You will be notified when the round starts.`,
       keyboardOpts([[{ text: username, callback_data: username }]])
     );
-  }, 1.8e6); // 30 Mints
+  }, 600000); // 1.8e6 30 Mints
 
+
+// Adding Participant to round
   bot.on("callback_query", (callback_query) => {
     const chatId = callback_query.message.chat.id;
     const data = callback_query.data;
 
-    // Adding Participant to round
-
-    db.ref("engagementRound/participants/" + user.id).set(username);
+    db.ref("engagementRound/participants/" + user.id).set({id : user.id, username});
 
     bot.sendMessage(
       chatId,
@@ -47,24 +66,24 @@ You will be notified when the round starts.`,
 
   setInterval(() => {
     bot.sendMessage(
-      chatId,
+      participant.id,
       "Round has been started. Please engage with all usernames to avoid any warning."
     );
-  }, 2.1e6); // 35 Mints
+  }, 90000);
 
   setInterval(() => {
     bot.sendMessage(
       chatId,
       "Following usernames are remaining. Please engage with these usernames to complete round successfully."
     );
-  }, 3e6); // 50 Mints
+  }, 900000);
 
-  setInterval(() => {
-    bot.sendMessage(
-      chatId,
-      "Round Ended.\nThank you so much for engaging in round. I would like to see you in next round.\nHappy Enagaging!"
-    );
-  }, 3.6e6); // 60 Mints
+//   setInterval(() => {
+//     bot.sendMessage(
+//       chatId,
+//       "Round Ended.\nThank you so much for engaging in round. I would like to see you in next round.\nHappy Enagaging!"
+//     );
+//   }, 3.6e6); // 60 Mints
 }
 
 module.exports = engagementRound;
