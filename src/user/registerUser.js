@@ -1,5 +1,6 @@
 const db = require("../firebase");
 const Joi = require("@hapi/joi");
+const { rules } = require("../utils/botMessages");
 
 const schema = Joi.object({
   email: Joi.string().email().required(),
@@ -140,6 +141,12 @@ function registerUser(bot) {
         }\n\nYou can use /rules command to see round rules and you can use /round command to check time left for next round.`
       );
     }
+  });
+
+  bot.onText(/rules/, (msg, match) => {
+    let chatId = msg.chat.id;
+
+    bot.sendMessage(chatId, rules);
   });
 }
 
