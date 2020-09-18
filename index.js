@@ -5,7 +5,7 @@ const token = process.env.bot_token;
 const bot = new TelegramBot(token, { polling: true });
 const registerUser = require("./src/user/registerUser");
 const updateProfile = require("./src/user/updateUserProfile");
-const engagementRound = require('./src/engagementRound');
+const engagementRound = require("./src/engagementRound");
 
 Sentry.init({ dsn: process.env.sentry_dsn });
 bot.on("polling_error", (err) => Sentry.captureException(err));

@@ -1,4 +1,10 @@
 //......> Remaining Tasks
+// Find User ID of an Instagram account
+// Install Express
+// Paste User ID in this link, and use app.get() on the URL to get shortcode of latest post.
+// https://instagram.com/graphql/query/?query_id=17888483320059182&variables={"id":"1951415043","first":20,"after":null}
+// https://www.instagram.com/anees__hussain/?__a=1
+
 // Bot should get participant's latest post from instagram
 // Bot should send list of posts' links to all participants
 // Bot should send warning/success messages to all participants
@@ -8,6 +14,8 @@
 // Refractoring
 
 const db = require("./firebase");
+const fetch = require("node-fetch");
+let fetchSettings = { method: "Get" };
 const keyboardOpts = require("./utils/keyboardOpts");
 const {
   dropMessage,
@@ -32,11 +40,11 @@ function engagementRound(bot) {
   let timeLeftAfterStartRound;
 
   let oneSecond = 1000; // ms
-  let totalRoundDuration = 240000; // 30 Mints in ms
+  let totalRoundDuration = 60000; // 30 Mints in ms
   let initialRoundTime = new Date().getTime() + totalRoundDuration; // Adding 30 minutes in ms
-  let announcementTime = 200000; // 25 Minutes in ms
-  let roundStartTime = 60000; // 20 Minutes in ms
-  let reminderTime = 30000; // 10 Minutes in ms
+  let announcementTime = 40000; // 25 Minutes in ms
+  let roundStartTime = 30000; // 20 Minutes in ms
+  let reminderTime = 10000; // 10 Minutes in ms
   let roundEndTime = oneSecond; // 1 Second in ms
 
   // Getting Ig_username & ChatIds from DB
@@ -107,13 +115,38 @@ function engagementRound(bot) {
         db.ref("engagementRound/participants/").on("value", (snap) => {
           let participantId = snap.val();
 
+          //------------------> Adding recent post URLs of participants to DB
+          for (let id in participantId) {
+            db.ref("engagementRound/participants/" + id).on(
+              "value",
+              (snapshot) => {
+                let participant = snapshot.val();
+
+                //------------------> Fetching URL from Instagram and adding it to DB
+                fetch(
+                  `https://www.instagram.com/${participant.username}/?__a=1`,
+                  fetchSettings
+                )
+                  .then((res) => res.json())
+                  .then((json) =>
+                    db.ref("engagementRound/postURLs/" + id).set({
+                      url: `https://www.instagram.com/p/${json.graphql.user.edge_owner_to_timeline_media.edges[0].node.shortcode}/`,
+                    })
+                  );
+              }
+            );
+          }
+
           if (!participantId) {
             bot.sendMessage(chatId[counter], roundStartNotice);
             return;
           }
           for (let id in participantId) {
             if (id === chatId[counter]) {
-              bot.sendMessage(chatId[counter], roundStartedInfo);
+              bot.sendMessage(
+                chatId[counter],
+                roundStartedInfo + `\nPlease engage with this list. \na`
+              );
             } else {
               bot.sendMessage(chatId[counter], roundStartedButNotEngaged);
             }
